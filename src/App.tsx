@@ -2,12 +2,16 @@ import { Heading } from './components/Heading';
 
 import './styles/theme.css';
 import './styles/global.css';
+import { Trash2Icon } from 'lucide-react';
 
 export function App() {
   return (
     <>
-      <Heading attribute={123} attribute2='string'>
+      <Heading>
         Olá, mundo!
+        <button>
+          <Trash2Icon />
+        </button>
       </Heading>
       <p>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto
