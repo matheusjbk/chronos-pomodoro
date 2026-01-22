@@ -1,8 +1,8 @@
+import styles from './style.module.css';
+
 type ContainerProps = {
   children: React.ReactNode;
 };
-
-import styles from './style.module.css';
 
 export function Container({ children }: ContainerProps) {
   return (
