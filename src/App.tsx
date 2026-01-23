@@ -25,7 +25,12 @@ export function App() {
       <Container>
         <form className='form' action=''>
           <div className='formRow'>
-            <Input id='input' type='text' />
+            <Input
+              labelText='Tarefa'
+              id='input'
+              type='text'
+              placeholder='Digite algo'
+            />
           </div>
 
           <div className='formRow'>
