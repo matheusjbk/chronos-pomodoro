@@ -1,24 +1,81 @@
-import { HistoryIcon, HouseIcon, SettingsIcon, SunIcon } from 'lucide-react';
+import {
+  HistoryIcon,
+  HouseIcon,
+  MoonIcon,
+  SettingsIcon,
+  SunIcon,
+} from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 import styles from './style.module.css';
 
+type AvailableThemes = 'dark' | 'light';
+
 export function Menu() {
+  const [theme, setTheme] = useState<AvailableThemes>(() => {
+    const storagedTheme = localStorage.getItem('theme') as AvailableThemes;
+
+    return storagedTheme ?? 'dark';
+  });
+
+  function handleThemeChange(
+    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+  ) {
+    event.preventDefault();
+
+    setTheme(prevTheme => {
+      const nextTheme = prevTheme === 'dark' ? 'light' : 'dark';
+      return nextTheme;
+    });
+  }
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const nextIconTheme = {
+    dark: <SunIcon />,
+    light: <MoonIcon />,
+  };
+
   return (
     <nav className={styles.menu}>
-      <a href='#' className={styles.menuLink}>
+      <a
+        href='#'
+        className={styles.menuLink}
+        aria-label='Página inicial'
+        title='Página inicial'
+      >
         <HouseIcon />
       </a>
 
-      <a href='#' className={styles.menuLink}>
+      <a
+        href='#'
+        className={styles.menuLink}
+        aria-label='Histórico'
+        title='Histórico'
+      >
         <HistoryIcon />
       </a>
 
-      <a href='#' className={styles.menuLink}>
+      <a
+        href='#'
+        className={styles.menuLink}
+        aria-label='Configurações'
+        title='Configurações'
+      >
         <SettingsIcon />
       </a>
 
-      <a href='#' className={styles.menuLink}>
-        <SunIcon />
+      <a
+        href='#'
+        className={styles.menuLink}
+        aria-label='Mudar tema'
+        title='Mudar tema'
+        onClick={handleThemeChange}
+      >
+        {nextIconTheme[theme]}
       </a>
     </nav>
   );
