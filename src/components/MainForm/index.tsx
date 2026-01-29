@@ -9,6 +9,7 @@ import { getNextCycle } from '../../utils/getNextCycle';
 import { getNextCycleType } from '../../utils/getNextCycleType';
 
 import styles from './style.module.css';
+import { Tips } from '../Tips';
 
 export function MainForm() {
   const taskNameInput = useRef<HTMLInputElement>(null);
@@ -55,7 +56,7 @@ export function MainForm() {
       </div>
 
       <div className={styles.formRow}>
-        <p>Lorem ipsum dolor sit amet.</p>
+        <Tips />
       </div>
 
       {state.currentCycle > 0 && (
