@@ -1,9 +1,10 @@
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useRef } from 'react';
 import { TaskContext } from '.';
 import { initialTaskState } from './initialTaskState';
 import { taskReducer } from './taskReducer';
 import { TimerWorkerManager } from '../../workers/TimerWorkerManager';
 import { TaskActionTypes } from './taskActions';
+import { loadBeep } from '../../utils/loadBeep';
 
 type TaskContextProviderProps = {
   children: React.ReactNode;
@@ -14,30 +15,43 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
 
   const worker = TimerWorkerManager.getInstance();
 
-  worker.onmessage(e => {
-    const countDownSeconds = e.data;
+  const playBeepRef = useRef<() => void | null>(null);
 
-    if (countDownSeconds <= 0) {
-      dispatch({ type: TaskActionTypes.COMPLETE_TASK });
-      worker.terminate();
-    } else {
-      dispatch({
-        type: TaskActionTypes.COUNTDOWN,
-        payload: { secondsRemaining: countDownSeconds },
-      });
-    }
+  useEffect(() => {
+    worker.onmessage(e => {
+      const countDownSeconds = e.data;
+
+      if (countDownSeconds <= 0) {
+        if (playBeepRef.current) {
+          playBeepRef.current();
+          playBeepRef.current = null;
+        }
+        dispatch({ type: TaskActionTypes.COMPLETE_TASK });
+        worker.terminate();
+      } else {
+        dispatch({
+          type: TaskActionTypes.COUNTDOWN,
+          payload: { secondsRemaining: countDownSeconds },
+        });
+      }
+    });
   });
 
   useEffect(() => {
-    console.log(state);
-
     if (!state.activeTask) {
-      console.log('worker finalizado por falta de tarefa ativa');
       worker.terminate();
     }
 
     worker.postMessage(state);
   }, [state, worker]);
+
+  useEffect(() => {
+    if (state.activeTask && playBeepRef.current === null) {
+      playBeepRef.current = loadBeep();
+    } else {
+      playBeepRef.current = null;
+    }
+  }, [state.activeTask]);
 
   return (
     <TaskContext.Provider value={{ state, dispatch }}>
