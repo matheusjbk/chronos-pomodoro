@@ -10,6 +10,8 @@ import { getNextCycleType } from '../../utils/getNextCycleType';
 
 import styles from './style.module.css';
 import { Tips } from '../Tips';
+import { showMessage } from '../../adapters/showMessage';
+import { toast } from 'react-toastify';
 
 export function MainForm() {
   const taskNameInput = useRef<HTMLInputElement>(null);
@@ -20,10 +22,14 @@ export function MainForm() {
 
   function handleCreateNewTask(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    showMessage.dismiss();
 
     const taskName = taskNameInput.current?.value;
 
-    if (!taskName) return;
+    if (!taskName) {
+      toast.warn('Digite o nome da tarefa');
+      return;
+    }
 
     const newTask: TaskModel = {
       id: Date.now().toString(),
@@ -36,10 +42,13 @@ export function MainForm() {
     };
 
     dispatch({ type: 'START_TASK', payload: newTask });
+    showMessage.success('Tarefa iniciada');
   }
 
   function handleInterruptTask() {
     dispatch({ type: 'INTERRUPT_TASK' });
+    showMessage.dismiss();
+    showMessage.error('Tarefa interrompida');
   }
 
   return (
