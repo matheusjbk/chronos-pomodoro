@@ -6,7 +6,7 @@ import styles from './style.module.css';
 export function Logo() {
   return (
     <div className={styles.logo}>
-      <RouterLink href='#' className={styles.logoLink}>
+      <RouterLink href='/' className={styles.logoLink}>
         <TimerIcon />
         <span>Chronos</span>
       </RouterLink>
