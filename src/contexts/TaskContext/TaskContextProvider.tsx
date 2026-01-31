@@ -11,7 +11,20 @@ type TaskContextProviderProps = {
 };
 
 export function TaskContextProvider({ children }: TaskContextProviderProps) {
-  const [state, dispatch] = useReducer(taskReducer, initialTaskState);
+  const [state, dispatch] = useReducer(taskReducer, initialTaskState, () => {
+    const storagedState = localStorage.getItem('state');
+
+    if (!storagedState) return initialTaskState;
+
+    const parsedStoragedState = JSON.parse(storagedState);
+
+    return {
+      ...parsedStoragedState,
+      activeTask: null,
+      secondsRemaining: 0,
+      formattedSecondsRemaining: '00:00',
+    };
+  });
 
   const worker = TimerWorkerManager.getInstance();
 
@@ -38,6 +51,8 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
   });
 
   useEffect(() => {
+    localStorage.setItem('state', JSON.stringify(state));
+
     if (!state.activeTask) {
       worker.terminate();
     }
