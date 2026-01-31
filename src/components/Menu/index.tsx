@@ -6,6 +6,7 @@ import {
   SunIcon,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { RouterLink } from '../RouterLink';
 
 import styles from './style.module.css';
 
@@ -41,34 +42,34 @@ export function Menu() {
 
   return (
     <nav className={styles.menu}>
-      <a
-        href='#'
+      <RouterLink
+        href='/'
         className={styles.menuLink}
         aria-label='Página inicial'
         title='Página inicial'
       >
         <HouseIcon />
-      </a>
+      </RouterLink>
 
-      <a
-        href='#'
+      <RouterLink
+        href='/history/'
         className={styles.menuLink}
         aria-label='Histórico'
         title='Histórico'
       >
         <HistoryIcon />
-      </a>
+      </RouterLink>
 
-      <a
-        href='#'
+      <RouterLink
+        href='/settings/'
         className={styles.menuLink}
         aria-label='Configurações'
         title='Configurações'
       >
         <SettingsIcon />
-      </a>
+      </RouterLink>
 
-      <a
+      <RouterLink
         href='#'
         className={styles.menuLink}
         aria-label='Mudar tema'
@@ -76,7 +77,7 @@ export function Menu() {
         onClick={handleThemeChange}
       >
         {nextIconTheme[theme]}
-      </a>
+      </RouterLink>
     </nav>
   );
 }
