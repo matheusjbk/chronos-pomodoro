@@ -16,6 +16,7 @@ import { toast } from 'react-toastify';
 export function MainForm() {
   const taskNameInput = useRef<HTMLInputElement>(null);
   const { state, dispatch } = useTaskContext();
+  const currentTaskName = state.activeTask?.name || '';
 
   const nextCycle = getNextCycle(state.currentCycle);
   const nextCycleType = getNextCycleType(nextCycle);
@@ -61,6 +62,7 @@ export function MainForm() {
           placeholder='Digite algo'
           ref={taskNameInput}
           disabled={!!state.activeTask}
+          defaultValue={currentTaskName}
         />
       </div>
 
