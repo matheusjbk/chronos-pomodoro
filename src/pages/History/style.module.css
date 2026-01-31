@@ -44,3 +44,11 @@
 .thSort:hover {
   filter: brightness(80%);
 }
+
+.noTasksMessage {
+  color: var(--gray-300);
+  font-size: 1.8rem;
+  font-style: italic;
+  font-weight: bold;
+  text-align: center;
+}
