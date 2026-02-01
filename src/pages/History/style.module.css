@@ -52,3 +52,23 @@
   font-weight: bold;
   text-align: center;
 }
+
+.dropDownRow {
+  display: flex;
+  flex-flow: column wrap;
+  align-items: flex-end;
+}
+
+.dropDownRow label {
+  margin: 1rem 0 0.5rem 0;
+  font-style: italic;
+  font-size: 1.6rem;
+  color: var(--text-muted);
+}
+
+.dropDownRow select {
+  max-width: 4rem;
+  background: var(--gray-500);
+  color: var(--text-default);
+  border-radius: 0.4rem;
+}

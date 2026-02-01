@@ -13,6 +13,10 @@ export function Settings() {
     <MainTemplate>
       <Container>
         <Heading>Configurações</Heading>
+        <p style={{ textAlign: 'center', marginTop: '1.5rem' }}>
+          Personalize o tempo de foco, descanso curto e longo do seu Pomodoro
+          (em minutos).
+        </p>
       </Container>
 
       <Container>

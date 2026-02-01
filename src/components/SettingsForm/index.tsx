@@ -2,11 +2,11 @@ import { SaveIcon } from 'lucide-react';
 import { Button } from '../Button';
 import { Input } from '../Input';
 import { useRef } from 'react';
-
-import styles from './style.module.css';
 import { useTaskContext } from '../../contexts/TaskContext/useTaskContext';
 import { showMessage } from '../../adapters/showMessage';
 import { TaskActionTypes } from '../../contexts/TaskContext/taskActions';
+
+import styles from './style.module.css';
 
 export function SettingsForm() {
   const { state, dispatch } = useTaskContext();

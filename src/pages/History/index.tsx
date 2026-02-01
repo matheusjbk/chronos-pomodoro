@@ -7,11 +7,11 @@ import { useTaskContext } from '../../contexts/TaskContext/useTaskContext';
 import { formatDate } from '../../utils/formatDate';
 import { getTaskStatus } from '../../utils/getTaskStatus';
 import { sortTasks, type SortTasksOptions } from '../../utils/sortTasks';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { TaskActionTypes } from '../../contexts/TaskContext/taskActions';
+import { showMessage } from '../../adapters/showMessage';
 
 import styles from './style.module.css';
-import { showMessage } from '../../adapters/showMessage';
 
 export function History() {
   const { state, dispatch } = useTaskContext();
@@ -23,6 +23,9 @@ export function History() {
       };
     },
   );
+  const [selectedOption, setSelectedOption] = useState('10');
+
+  const itemsPerPage = useRef<HTMLSelectElement>(null);
 
   function handleSortTasksOptions({ field }: Pick<SortTasksOptions, 'field'>) {
     const newDirection = sortTasksOptions.direction === 'desc' ? 'asc' : 'desc';
@@ -36,6 +39,15 @@ export function History() {
       direction: newDirection,
       field,
     });
+  }
+
+  function handleItemsInPage() {
+    const itemsQuantity = Number(itemsPerPage.current?.value);
+    const totalPages = Math.ceil(state.tasks.length / itemsQuantity);
+
+    setSelectedOption(itemsQuantity.toString());
+
+    console.log(itemsQuantity, totalPages);
   }
 
   function handleResetHistory() {
@@ -94,58 +106,75 @@ export function History() {
 
       <Container>
         {hasTasks && (
-          <div className={styles.responsiveTable}>
-            <table>
-              <thead>
-                <tr>
-                  <th
-                    onClick={() => handleSortTasksOptions({ field: 'name' })}
-                    className={styles.thSort}
-                  >
-                    Tarefa
-                  </th>
-                  <th
-                    onClick={() =>
-                      handleSortTasksOptions({ field: 'duration' })
-                    }
-                    className={styles.thSort}
-                  >
-                    Duração
-                  </th>
-                  <th
-                    onClick={() =>
-                      handleSortTasksOptions({ field: 'startDate' })
-                    }
-                    className={styles.thSort}
-                  >
-                    Data
-                  </th>
-                  <th>Status</th>
-                  <th>Tipo</th>
-                </tr>
-              </thead>
+          <>
+            <div className={styles.responsiveTable}>
+              <table>
+                <thead>
+                  <tr>
+                    <th
+                      onClick={() => handleSortTasksOptions({ field: 'name' })}
+                      className={styles.thSort}
+                    >
+                      Tarefa
+                    </th>
+                    <th
+                      onClick={() =>
+                        handleSortTasksOptions({ field: 'duration' })
+                      }
+                      className={styles.thSort}
+                    >
+                      Duração
+                    </th>
+                    <th
+                      onClick={() =>
+                        handleSortTasksOptions({ field: 'startDate' })
+                      }
+                      className={styles.thSort}
+                    >
+                      Data
+                    </th>
+                    <th>Status</th>
+                    <th>Tipo</th>
+                  </tr>
+                </thead>
 
-              <tbody>
-                {sortedTasks.map(task => {
-                  const taskTypeDict = {
-                    workTime: 'Foco',
-                    shortBreakTime: 'Descanso curto',
-                    longBreakTime: 'Descanso longo',
-                  };
+                <tbody>
+                  {sortedTasks.map(task => {
+                    const taskTypeDict = {
+                      workTime: 'Foco',
+                      shortBreakTime: 'Descanso curto',
+                      longBreakTime: 'Descanso longo',
+                    };
 
-                  return (
-                    <tr key={task.id}>
-                      <td>{task.name}</td>
-                      <td>{task.duration} min</td>
-                      <td>{formatDate(task.startDate)}</td>
-                      <td>{getTaskStatus(task, state.activeTask)}</td>
-                      <td>{taskTypeDict[task.type]}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                    return (
+                      <tr key={task.id}>
+                        <td>{task.name}</td>
+                        <td>{task.duration} min</td>
+                        <td>{formatDate(task.startDate)}</td>
+                        <td>{getTaskStatus(task, state.activeTask)}</td>
+                        <td>{taskTypeDict[task.type]}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div className={styles.dropDownRow}>
+              <label htmlFor='dropDown'>Itens por página</label>
+              <select
+                name='dropDown'
+                id='dropDown'
+                ref={itemsPerPage}
+                onChange={handleItemsInPage}
+                defaultValue={selectedOption}
+              >
+                <option value='5'>5</option>
+                <option value='10'>10</option>
+                <option value='15'>15</option>
+                <option value='20'>20</option>
+              </select>
+            </div>
+          </>
         )}
         {!hasTasks && (
           <p className={styles.noTasksMessage}>
