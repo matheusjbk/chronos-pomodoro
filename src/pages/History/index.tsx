@@ -1,4 +1,4 @@
-import { TrashIcon } from 'lucide-react';
+import { ChevronLeftIcon, ChevronRightIcon, TrashIcon } from 'lucide-react';
 import { Button } from '../../components/Button';
 import { Container } from '../../components/Container';
 import { Heading } from '../../components/Heading';
@@ -7,7 +7,7 @@ import { useTaskContext } from '../../contexts/TaskContext/useTaskContext';
 import { formatDate } from '../../utils/formatDate';
 import { getTaskStatus } from '../../utils/getTaskStatus';
 import { sortTasks, type SortTasksOptions } from '../../utils/sortTasks';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { TaskActionTypes } from '../../contexts/TaskContext/taskActions';
 import { showMessage } from '../../adapters/showMessage';
 
@@ -24,8 +24,7 @@ export function History() {
     },
   );
   const [selectedOption, setSelectedOption] = useState('10');
-
-  const itemsPerPage = useRef<HTMLSelectElement>(null);
+  const [pageNumber, setPageNumber] = useState(1);
 
   function handleSortTasksOptions({ field }: Pick<SortTasksOptions, 'field'>) {
     const newDirection = sortTasksOptions.direction === 'desc' ? 'asc' : 'desc';
@@ -41,13 +40,28 @@ export function History() {
     });
   }
 
-  function handleItemsInPage() {
-    const itemsQuantity = Number(itemsPerPage.current?.value);
-    const totalPages = Math.ceil(state.tasks.length / itemsQuantity);
+  const sortedTasks = useMemo(() => {
+    return sortTasks({
+      tasks: state.tasks,
+      direction: sortTasksOptions.direction,
+      field: sortTasksOptions.field,
+    });
+  }, [state.tasks, sortTasksOptions.direction, sortTasksOptions.field]);
 
-    setSelectedOption(itemsQuantity.toString());
+  const startIndex = (pageNumber - 1) * Number(selectedOption);
+  const endIndex = startIndex + Number(selectedOption);
+  const totalPages = Math.ceil(state.tasks.length / Number(selectedOption));
+  const paginatedTasks = sortedTasks.slice(startIndex, endIndex);
 
-    console.log(itemsQuantity, totalPages);
+  function handlePageChange(newPage: number) {
+    if (newPage < 1 || newPage > totalPages) return;
+
+    setPageNumber(newPage);
+  }
+
+  function handleChangeOption(e: React.ChangeEvent<HTMLSelectElement>) {
+    setSelectedOption(e.target.value);
+    setPageNumber(1);
   }
 
   function handleResetHistory() {
@@ -76,14 +90,6 @@ export function History() {
       showMessage.dismiss();
     };
   }, []);
-
-  const sortedTasks = useMemo(() => {
-    return sortTasks({
-      tasks: state.tasks,
-      direction: sortTasksOptions.direction,
-      field: sortTasksOptions.field,
-    });
-  }, [state.tasks, sortTasksOptions.direction, sortTasksOptions.field]);
 
   return (
     <MainTemplate>
@@ -139,7 +145,7 @@ export function History() {
                 </thead>
 
                 <tbody>
-                  {sortedTasks.map(task => {
+                  {paginatedTasks.map(task => {
                     const taskTypeDict = {
                       workTime: 'Foco',
                       shortBreakTime: 'Descanso curto',
@@ -159,13 +165,26 @@ export function History() {
                 </tbody>
               </table>
             </div>
+            <div className={styles.pageInfo}>
+              <button
+                className={styles.pageButton}
+                onClick={() => handlePageChange(pageNumber - 1)}
+              >
+                <ChevronLeftIcon />
+              </button>
+              <button
+                className={`${styles.pageButton} ${styles.pageButtonRight}`}
+                onClick={() => handlePageChange(pageNumber + 1)}
+              >
+                <ChevronRightIcon />
+              </button>
+            </div>
             <div className={styles.dropDownRow}>
               <label htmlFor='dropDown'>Itens por página</label>
               <select
                 name='dropDown'
                 id='dropDown'
-                ref={itemsPerPage}
-                onChange={handleItemsInPage}
+                onChange={handleChangeOption}
                 defaultValue={selectedOption}
               >
                 <option value='5'>5</option>

@@ -42,7 +42,7 @@
 }
 
 .thSort:hover {
-  filter: brightness(80%);
+  filter: brightness(70%);
 }
 
 .noTasksMessage {
@@ -51,6 +51,26 @@
   font-style: italic;
   font-weight: bold;
   text-align: center;
+}
+
+.pageButton {
+  background: none;
+  border: none;
+  color: var(--text-default);
+  font-size: 1.2rem;
+  padding: 0.8rem;
+  font-weight: bold;
+  border-radius: 0.8rem;
+  transition: all 150ms ease-in-out;
+  cursor: pointer;
+}
+
+.pageButton:hover {
+  filter: brightness(70%);
+}
+
+.pageButtonRight {
+  float: right;
 }
 
 .dropDownRow {
